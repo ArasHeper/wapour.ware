@@ -74,8 +74,34 @@ class Database
             return -1;
         }
     }
+    //returns array. 0 has genre, 1 has age, 2 has unit_sold, 3 has description, 4 has price, 5 has is mult
+    function getGame($gamename)
+    {
+        $sql = "SELECT *
+                FROM game
+                WHERE name = '$gamename' ";
 
+        $result = $this->conn->query($sql);
+        echo "result: " . $result->num_rows;
 
+        if ($result->num_rows > 0) {
+            while($row = $result->fetch_assoc())
+            {
+                $genre = $row["genre"];
+                $age = $row["age"];
+                $unit_sold = $row["unit_sold"];
+                $description = $row["description"];
+                $price = $row["price"];
+                $isMult = $row["ismultiplayer"];
+            }
+            $arr = array($genre,$age,$unit_sold,$description,$price,$isMult);
+            echo "Game retrieved\n";
+            return $arr;
+        } else {
+            echo "No such game";
+            return -1;
+        }
+    }
 
 }
 
