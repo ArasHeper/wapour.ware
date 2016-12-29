@@ -39,6 +39,33 @@ class Database
         } else {
             echo "Error: " . $sql . "<br>" . $this->conn->error;
         }
+
+
+
+        $sql = "SELECT count(iduser) as count FROM USER GROUP BY iduser";
+        $result = $this->conn->query($sql);
+
+        $row = $result->num_rows + 1;
+        $sql = "INSERT INTO Login_system(username, password, idofUser) 
+                VALUES ($username, $password,$row)";
+
+        if ($this->conn->query($sql) === TRUE) {
+            echo "New record created successfully\n";
+        } else {
+            echo "Error: " . $sql . "<br>" . $this->conn->error;
+        }
+    }
+
+    function login($name, $birtdate, $desc, $email, $nickname, $country,$username,$password)
+    {
+        $sql = "INSERT INTO USER(name, birthdate, description, email, nickname,country) 
+                VALUES ($name, $birtdate,$desc, $email, $nickname,$country)";
+
+        if ($this->conn->query($sql) === TRUE) {
+            echo "New record created successfully\n";
+        } else {
+            echo "Error: " . $sql . "<br>" . $this->conn->error;
+        }
     }
 
 
