@@ -383,20 +383,31 @@ class Database
             $sql = "SELECT * from Game";
         }
         else {
-            $sql = "SELECT * from Game where not exists (SELECT idGame, Game.name AS gameName, genre, 'Owned' as STATUS
- 				FROM Game INNER JOIN Owns INNER JOIN User
+            $sql = "SELECT * from Game where idGame not in (SELECT idGame
+ 				FROM Game, User, Owns
  				WHERE Game.idGame = Owns.OwnedGame and Owns.Owner = User.IDUser and '$userID' = User.IDUser)";
         }
 
 
         $result = $this->conn->query($sql);
-        echo "result: " . $result->num_rows;
+        //echo "result: " . $result->num_rows;
 
         $games = array();
+        $count = 0;
         if ($result->num_rows > 0) {
             while($row = $result->fetch_assoc()) {
-                echo "\nid: " . $row["idGame"]. " - Name: " . $row["name"]. " " . $row["genre"]. "<br>";
-                array_push($games, $row);
+                //echo "\nid: " . $row["idGame"]. " - Name: " . $row["name"]. " " . $row["genre"]. "<br>";
+                //array_push($games, $row);
+                $idGame = $row["idGame"];
+                $name = $row["name"];
+                $genre = $row["genre"];
+                $sold= $row["unit_sold"];
+                $description  = $row["description"];
+                $price = $row["price"];
+                $isMult = $row["isMultiplayer"];
+                $game = array($idGame,$name,$genre,$sold,$description,$price,$isMult);
+                $games[$count] = $game;
+                $count++;
             }
             return $games;
         } else {
