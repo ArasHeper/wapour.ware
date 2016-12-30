@@ -11,7 +11,8 @@
     $password = "123";
     //$d->register($name, $birth_date, $desc, $email, $nickname, $country,$username,$password);
     //$d->search("1", False);
-    $d->showUserFriends(1, 'tugrul');
+    //$d->showUserFriends(1, 'tugrul');
+    $d->userSearch('melih');
 
 /*$sql = "INSERT INTO Group(name,admin_id) VALUES ('RTS Lovers',1)";
 if ($conn->query($sql) === TRUE) {

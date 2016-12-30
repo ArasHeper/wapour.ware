@@ -141,10 +141,10 @@ class Database2
 
  		// Check if show including owned
  		if ($showOwned === TRUE) {
- 			$sql = "SELECT * from Game where Game.name LIKE '%'$keyword'%'";
+ 			$sql = "SELECT * from Game where Game.name LIKE '%$keyword%";
  		} 
  		else {
- 			$sql = "SELECT * from Game where Game.name LIKE '%'$keyword'%' and not exists (SELECT idGame, Game.name AS gameName, genre, 'Owned' as STATUS
+ 			$sql = "SELECT * from Game where Game.name LIKE '%$keyword%' and not exists (SELECT idGame, Game.name AS gameName, genre, 'Owned' as STATUS
  				FROM Game INNER JOIN Owns INNER JOIN User
  				WHERE Game.idGame = Owns.OwnedGame and Owns.Owner = User.IDUser and '$userID' = User.IDUser)";
  		}
@@ -245,7 +245,7 @@ class Database2
     	else {
     		$sql = "SELECT Friends.Friend2 as ide, User.name as name
 					FROM Friends, User
-					WHERE Friends.Friend1 = '$userID' and Friends.Friend2 = User.IDUser and User.name LIKE '%'$keyword'%'
+					WHERE Friends.Friend1 = '$userID' and Friends.Friend2 = User.IDUser and User.name LIKE '%$keyword%'
 					ORDER BY User.name ASC";
     	}
 
@@ -294,6 +294,31 @@ class Database2
             return -1;
 
         }
+    }
+
+    function userSearch($keyword) {
+    	/*$sql = "SELECT t2.name as name, t2.groupID as groupide, (t2.IDUser IS NOT NULL) AS AlreadyIn 
+				FROM (User LEFT JOIN ( SELECT * FROM Friends WHERE Friends.Friend2 = IDUser ) AS t1
+				ON t1.IDUser = IDUser) AS t2
+				ORDER BY t2.name ASC
+				WHERE t2.name LIKE ‘%@keyword%’";*/
+
+		$sql = "SELECT IDUser, name FROM User WHERE User.Name LIKE '%$keyword%'";
+
+
+		$result = $this->conn->query($sql);
+        echo "result: " . $result->num_rows;
+
+        if ($result->num_rows > 0) {
+            while($row = $result->fetch_assoc()) {
+        		echo "\nid: " . $row["IDUser"]. " - Name: " . $row["name"] . "<br>\n";
+    		}
+            return 1;
+        } else {
+            echo "No people";
+            return -1;
+        }
+
     }
 
 
