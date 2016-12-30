@@ -155,7 +155,17 @@ class Database
             echo "Error: " . $sql . "<br>" . $this->conn->error;
             return false;
         }
+        //update the unit sold
+        $sql = "UPDATE Game SET unit_sold = unit_sold + 1 WHERE idgame = '$gameID'";
 
+        if ($this->conn->query($sql) === TRUE) {
+            //echo " successfully\n";
+        } else {
+            echo "Error: " . $sql . "<br>" . $this->conn->error;
+            return false;
+        }
+
+        return true;
     }
 
     function getUser($userid)
