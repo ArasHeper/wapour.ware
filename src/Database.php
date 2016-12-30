@@ -11,9 +11,12 @@ class Database
     var $conn;
 
     function __construct()
-    {
-        $servername = "localhost";//this is for my machine we can change it?
-        $username = "root";
+    {	
+		$servername = "139.179.206.167:3306";//this is for my machine we can change it?
+		//$servername = "172.20.10.3:3306";//this is for my machine we can change it?
+		$username = "Tcan";
+        //$servername = "localhost";//this is for my machine we can change it?
+        //$username = "root";
         $password = "123123";
         $dbname = "CS353";
 
@@ -21,10 +24,12 @@ class Database
         $this->conn = new mysqli($servername, $username, $password, $dbname);
         // Check connection
         if ($this->conn->connect_error) {
+			echo "0";
             die("Connection failed: " . $this->conn->connect_error);
+			echo "0";
         }
         else
-            echo "Connected to database\n";
+            echo "1";
     }
 
     //Name,birthdate,desc,email,country,username our all strings, password is int.
