@@ -149,9 +149,7 @@
 		//pull the data from sql database
 		$array;
 		//echo a form for each of them, like this;
-		$count = 0;
-		$_SESSION["store_elements"] = $array;
-		
+		$count = count($array);
 		for( $i, i < $count, i++){
 			$game = $array[i];
 			$id = "toGamePage:" + i;
