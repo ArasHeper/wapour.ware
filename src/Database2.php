@@ -10,7 +10,8 @@ class Database2
     var $conn;
     function __construct()
     {
-        $servername = "139.179.206.167:3306";//this is for my machine we can change it?
+        //$servername = "139.179.206.167:3306";//this is for my machine we can change it?
+        $servername = "172.20.10.3:3306";
         $username = "Tcan";
         $password = "123123";
         $dbname = "CS353";
@@ -25,36 +26,8 @@ class Database2
     }
     //Name,birthdate,desc,email,country,username our all strings, password is int.
     //Also do we need an username? It can be just email too. todo
-    function register($name, $birtdate, $desc, $email, $nickname, $country,$username,$password)
-    {
-        $sql = "INSERT INTO USER(name, birth_date, description, email, nickname,country) 
-                VALUES ('$name', '$birtdate', '$desc', '$email', '$nickname', '$country');";
-        if ($this->conn->query($sql) === TRUE) {
-            echo "New record created successfully\n";
-        } else {
-            echo "Error: " . $sql . "<br>" . $this->conn->error;
-        }
-        $sql = "SELECT count(iduser) as count FROM USER GROUP BY iduser";
-        $result = $this->conn->query($sql);
-        $row = $result->num_rows;
-        $sql = "INSERT INTO Login_system(username, password, idofUser) 
-                VALUES ('$username', $password, $row )";
-        if ($this->conn->query($sql) === TRUE) {
-            echo "New record created successfully\n";
-        } else {
-            echo "Error: " . $sql . "<br>" . $this->conn->error;
-        }
-    }
-    function login($name, $birtdate, $desc, $email, $nickname, $country,$username,$password)
-    {
-        $sql = "INSERT INTO USER(name, birth_date, description, email, nickname,country) 
-                VALUES ($name, $birtdate,$desc, $email, $nickname,$country)";
-        if ($this->conn->query($sql) === TRUE) {
-            echo "New record created successfully\n";
-        } else {
-            echo "Error: " . $sql . "<br>" . $this->conn->error;
-        }
-    }
+
+
 
     // NOT OWNED CAN BE TRUE FALSE
     function show($userID, $showOwned) {

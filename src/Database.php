@@ -339,11 +339,13 @@ class Database
         $result = $this->conn->query($sql);
         echo "result: " . $result->num_rows;
 
+        $users = array();
         if ($result->num_rows > 0) {
             while($row = $result->fetch_assoc()) {
+                array_push($users, $row);
                 echo "\nid: " . $row["IDUser"]. " - Name: " . $row["name"] . "<br>\n";
             }
-            return 1;
+            return $users;
         } else {
             echo "No people";
             return -1;
@@ -353,6 +355,7 @@ class Database
 
 
     // NOT OWNED CAN BE TRUE FALSE
+    // Show all games, if showowned true, show all including user own
     function show($userID, $showOwned) {
         /*$sql = "WITH Belonging (idGame, gameName, genre, STATUS) as (SELECT idGame, Game.name AS gameName, genre, 'Owned' as STATUS
                  FROM Game INNER JOIN Owns INNER JOIN User
@@ -390,11 +393,13 @@ class Database
         $result = $this->conn->query($sql);
         echo "result: " . $result->num_rows;
 
+        $games = array()
         if ($result->num_rows > 0) {
             while($row = $result->fetch_assoc()) {
                 echo "\nid: " . $row["idGame"]. " - Name: " . $row["name"]. " " . $row["genre"]. "<br>";
+                array_push($games, $row);
             }
-            return 1;
+            return $games;
         } else {
             echo "No user";
             return -1;
@@ -414,9 +419,11 @@ class Database
         $result = $this->conn->query($sql);
         echo "result: " . $result->num_rows;
 
+        $games = array()
         if ($result->num_rows > 0) {
             while($row = $result->fetch_assoc()) {
                 echo "\nid: " . $row["idGame"]. " - Name: " . $row["name"]. " " . $row["genre"]. "<br>";
+                $games = array_push($games, $row);
             }
             return 1;
         } else {
@@ -425,6 +432,7 @@ class Database
         }
     }
 
+    // Search for games
     function search($keyword, $userID, $showOwned) {
         /*$sql = "WITH Belonging (idGame, gameName, genre, STATUS) as (SELECT idGame, Game.name AS gameName, genre, 'Owned' as STATUS
                  FROM Game INNER JOIN Owns INNER JOIN User
@@ -462,11 +470,15 @@ class Database
         $result = $this->conn->query($sql);
         echo "result: " . $result->num_rows;
 
+        $games = array();
+
         if ($result->num_rows > 0) {
             while($row = $result->fetch_assoc()) {
+                array_push($games, $row);
                 echo "\nid: " . $row["idGame"]. " - Name: " . $row["name"]. " " . $row["genre"]. "<br>";
             }
-            return 1;
+
+            return $games;
         } else {
             echo "No user";
             return -1;
@@ -548,11 +560,13 @@ class Database
         $result = $this->conn->query($sql);
         echo "result: " . $result->num_rows;
 
+        $friends = array();
         if ($result->num_rows > 0) {
             while($row = $result->fetch_assoc()) {
                 echo "\nid: " . $row["ide"]. " - Name: " . $row["name"] . "<br>\n";
+                array_push($friends, $row);
             }
-            return 1;
+            return $friends;
         } else {
             echo "No friends";
             return -1;
