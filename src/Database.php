@@ -519,6 +519,23 @@ class Database
 
     function deleteUser($userID)
     {
+        $sql = "DELETE FROM Friends WHERE friend1 = $userID or friend2 = $userID";
+
+        if ($this->conn->query($sql) === TRUE) {
+            //echo "Success Delete";
+        } else {
+            echo "Error: " . $sql . "<br>" . $this->conn->error;
+        }
+
+        $sql = "DELETE FROM owns WHERE owner = $userID";
+
+        if ($this->conn->query($sql) === TRUE) {
+            //echo "Success Delete";
+        } else {
+            echo "Error: " . $sql . "<br>" . $this->conn->error;
+        }
+
+
         $sql = "DELETE FROM User WHERE idUser = $userID";
 
         if ($this->conn->query($sql) === TRUE) {
