@@ -317,7 +317,6 @@ class Database
             echo "Error: " . $sql . "<br>" . $this->conn->error;
         }
 
-
     }
 
     //Sends gift. Gift message is message with a gift. Sender and reciever id is self explanatory. Game id is id of the sended game
@@ -528,6 +527,14 @@ class Database
         }
 
         $sql = "DELETE FROM owns WHERE owner = $userID";
+
+        if ($this->conn->query($sql) === TRUE) {
+            //echo "Success Delete";
+        } else {
+            echo "Error: " . $sql . "<br>" . $this->conn->error;
+        }
+
+        $sql = "DELETE FROM login_system where idofuser = $userID";
 
         if ($this->conn->query($sql) === TRUE) {
             //echo "Success Delete";
