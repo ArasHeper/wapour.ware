@@ -242,6 +242,16 @@ class Database
             return -1;
         }
     }
+    function avgGameByUser() {
+        $sql = "SELECT AVG( gamecount) as average FROM    (SELECT count(idUser) as gamecount, idUser FROM User, Owns WHERE idUser = Owner Group By idUser)";
+        $result = $this->conn->query($sql);
+        $num = 0;
+        while($row = $result->fetch_assoc())
+        {
+            $num = $row["average"];
+        }
+        return $num;
+    }
 
 
     function gameStatistics() {
