@@ -1,3 +1,6 @@
+<?php
+session_start();
+?>
 <!DOCTYPE html>
 
 
@@ -111,16 +114,16 @@
  <a class="top" href="store.php">Store</a>
 </td>
 <td>
- <a class="top" href="http://www.bilkent.edu.tr/bilkent-tr/index.html">Profile</a>
+ <a class="top" href="profileinfo.php">Profile</a>
 </td>
 <td>
- <a class="top" href="http://www.bilkent.edu.tr/bilkent-tr/index.html">Social</a>
+ <a class="top" href="friends.php">Social</a>
 </td>
 <td>
- <a class="top" href="http://www.bilkent.edu.tr/bilkent-tr/index.html">Library</a>
+ <a class="top" href="mygames.php">Library</a>
 </td>
 <td>
- <a class="top" href="http://www.bilkent.edu.tr/bilkent-tr/index.html">Gifts</a>
+ <a class="top" href="gifts.php">Gifts</a>
 </td>
 </tr>
 </td>
@@ -129,38 +132,62 @@
 </tr>
 <tr>
 <td>
-<form action="signup.php" method="post">
-  <header>Sign up</header>
-  <label> User Name </label>
-  <input type='text' id='username' name='username' /><br/>
-  <div class="help">At least 6 character</div>
+<form action="editprofile.php" method="post">
+  <header>Edit Profile</header>
+ <div class="help">At least 6 character</div>
   
   <label>e-mail </label>
   <input type='text' id='email' name='email' /><br/>
+  <button type="submit" name="change_email" value = "post"> Change Email</button>
+
   
+  <br>
   <label> Name </label>
   <input type='text' id='name' name='name' /><br/>
+  <button type="submit" name="change_name" value = "post"> Change Name </button>
+
+  <br>
    
   <label> Nick Name </label>
   <input type='text' id='nickname' name='nickname' /><br/>
-  
-  <label>Password </label>
+  <button type="submit" name="change_nickname" value = "post"> Change Nickname</button>
+
+  <br>
+    
+  <label>Old Password </label>
+  <input type='password' id='oldpassword' name='oldpassword' /><br/>
+
+  <label>New Password </label>
   <input type='password' id='password' name='password' /><br/>
+  <br>
   <div class="help">At least 6 character</div>
 
-  <label>Re-enter Password </label>
+  <label>Re-enter New Password </label>
   <input type='password' id='password2' name='password2' /><br/>
-  
+  <button type="submit" name="change_password" value = "post"> Change Password </button>
+
+  <br>
   <label> Birth date </label>
   <input type='text' id='birtdate' name='birtdate' /><br/>
+  <button type="submit" name="change_birtdate" value = "post"> Change Birth Date</button>
+
+  <br>
   <div class="help">DD/MM/YYYY</div>
 
   <label>Country </label>
   <input type='text' id='country' name='country' /><br/>
   
-  <button type="submit" name="abc" value = "post"> Sign up </button>
+  <button type="submit" name="change_country" value = "post"> Change Country</button>
 
+  <br>
 
+  <label>Profile Description </label>
+  <input type='text' id='desc' name='desc' /><br/>
+  
+  <button type="submit" name="change_desc" value = "post"> Change Description</button>
+
+  <br>
+  
 <a />
 </form>
 
@@ -181,40 +208,49 @@
 <?php
 require_once 'src/Database.php';
 
-if(isset($_POST['abc'])){
-	$var;
-	$var = 2;//gggg.func(sadasd);
-	$var = $database = new Database();
-    //$var = $database->function __construct();
-	if($var == 1){
-		
-		//header("Location: login.php");
-		echo("SUCCCESSS");
-		$password = $_POST['password'];
-		$password2 = $_POST['password2'];
-		if( $password == $password2){
-			$name = $_POST['name'];
-			$username = $_POST['username'];
-			$nickname = $_POST['nickname'];
-			$email = $_POST['email'];
-			$password = $_POST['password'];
-			$birtdate = $_POST['birtdate'];
-			$country = $_POST['country'];
-			$desc = '';
-			$answer = $database->register($name, $birtdate, $desc, $email, $nickname, $country,$username,$password);
-			header("Location: login.php");
-			exit;
-		}else{
-			echo'Wrong input.';
-		}
-	}
-	else{
-		//header("Location: login.php");
-		echo("FAILURE");
-		//exit;
-	}
+$database = new Database();
+
+if(isset($_POST['change_email'])){
+	$email = $_POST['email'];
+	$database->editProfileEmail($_SESSION['userid'],$email);
+}
+if(isset($_POST['change_nickname'])){
+	$nickname = $_POST['nickname'];
+	$database->editProfileNickname($_SESSION['userid'],$nickname);
+}
+if(isset($_POST['change_birtdate'])){
+	$birtdate = $_POST['birtdate'];
+	$database->editProfileBirthdate($_SESSION['userid'],$birtdate);
 	
 }
+if(isset($_POST['change_name'])){
+	$name = $_POST['name'];
+	$database->editProfileName($_SESSION['userid'],$name);
+	
+}
+if(isset($_POST['change_country'])){
+	$country = $_POST['country'];
+	$database->editProfileCountry($_SESSION['userid'],$country);
+	
+}
+if(isset($_POST['change_desc'])){
+	$desc = $_POST['desc'];
+	$database->editProfileDesc($_SESSION['userid'],$desc);
+}
+if(isset($_POST['change_password'])){
+	$password = $_POST['password'];
+	$password2 = $_POST['password2'];
+	$oldpassword = $_POST['oldpassword'];
+	if( $oldpassword == $_SESSION['userpassword']){
+		if( $password == $password2){
+			$database->changePassword($_SESSION['userid'],$password);
+		}else{
+			echo' Could not change password, wrong input.';
+		}
+	}
+}
+
+
 ?>
 </body>
 </html>

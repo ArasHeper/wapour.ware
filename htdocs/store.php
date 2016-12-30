@@ -1,3 +1,38 @@
+<?php
+session_start();
+?>
+<?php
+
+if(isset($_POST['toGamePage'])){
+	$val= $_POST['hiddenVar'];
+	$_SESSION["viewed_game"] = $val;
+	//goto game page
+	header("Location: gameinfo.php");
+	exit;	
+}
+if (isset($_SESSION["s_genre"])){
+	if(isset($_POST['search'])){
+	$gen = $_POST['genre'];
+	$own = $_POST['owned'];
+	$_SESSION["s_genre"]= $gen;
+	$_SESSION["s_owned"]= $own;
+	//goto game page
+}
+}
+
+if(isset($_POST['stats'])){
+	header("Location: stat.php");
+	exit;	
+//goto game page
+}
+
+
+
+
+?>
+
+
+
 <!DOCTYPE html>
 <html >
 <head>
@@ -36,6 +71,14 @@
 		  border-radius: 10px;
 		}
 		form header {
+		  background: #FF3838;
+		  padding: 30px 20px;
+		  color: white;
+		  font-size: 1.2em;
+		  font-weight: 600;
+		  border-radius: 10px 10px 0 0;
+		}
+		header {
 		  background: #FF3838;
 		  padding: 30px 20px;
 		  color: white;
@@ -110,16 +153,16 @@
  <a class="top" href="store.php">Store</a>
 </td>
 <td>
- <a class="top" href="http://www.bilkent.edu.tr/bilkent-tr/index.html">Profile</a>
+ <a class="top" href="profileinfo.php">Profile</a>
 </td>
 <td>
- <a class="top" href="http://www.bilkent.edu.tr/bilkent-tr/index.html">Social</a>
+ <a class="top" href="friends.php">Social</a>
 </td>
 <td>
- <a class="top" href="http://www.bilkent.edu.tr/bilkent-tr/index.html">Library</a>
+ <a class="top" href="mygames.php">Library</a>
 </td>
 <td>
- <a class="top" href="http://www.bilkent.edu.tr/bilkent-tr/index.html">Gifts</a>
+ <a class="top" href="gifts.php">Gifts</a>
 </td>
 </tr>
 </td>
@@ -128,43 +171,50 @@
 </tr>
 <tr>
 <td>
-<form action="login.php" method="post">
-  <header>Login</header>
-  <label>username </label>
-  <input type='text' id='username' name='username' /><br/>
-  <label>Password </label>
-  <input type='password' id='password' name='password' /><br/>
-  <button type="submit" name="login" value = "post"> Login </button>
-</form>
+
+  <header>Store</header>
+	<?php
+	$_SESSION["viewedGame"] = NULL;
+	if(session_status() == PHP_SESSION_ACTIVE){
+		require_once 'src/Database.php';
+		echo '
+			<form action="stat.php" method="post">
+				<button type="submit" name="stats" value = "post"> STATISTICS</button>
+			</form>';
+		echo '
+			<form action="store.php" method="post">
+				<label> Genre <input type="text" id="genre" name="genre"/><br/>
+				<label> Owned <input type="checkbox" id="owned" name="owned" value = "on" /><br/>
+				<button type="submit" name="search" value = "post"> SEARCH</button>
+			</form>';
+		//pull the data from sql database
+		$database = new Database();
+		$array = $database->filterByGenre($_SESSION["s_genre"], $_SESSION["userid"], $_SESSION["s_owned"]);
+		//$array = $database->show($_SESSION["userid"], TRUE);
+		//echo a form for each of them, like this;
+		$count = count($array);
+		for( $i = 0; $i < $count; $i++){
+			$game = $array[$i];
+			$id = "toGamePage:" + $i;
+			echo '
+			<form action="store.php" method="post">
+				<input type="hidden" id=$id name="hiddenVar" value='.$game[1].' />
+				<button type="submit" name="toGamePage" value = "post">'; echo "$game[1]";  echo '</button>
+			</form>';
+		}
+	}
+	else {
+		header("Location: login.php");
+		exit;	
+	}
+	?>
+
 </td></tr>
 <tr><td>
-<form action="signup.php" >
- <button > Register a New Account </button>
-</form>
 
 </td></tr>
 </table>
 
-<?php
-require_once 'C:/xampp/htdocs/databaseservice/Database.php';
 
-if(isset($_POST['login'])){
-		$var = $database = new Database();
-	
-		$username= $_POST['username'];
-		$password = $_POST['password'];
-		
-		$answer = $database->login($username, $password);
-		if($answer = 1){
-			header("Location: index.php");
-			exit;
-		}
-		else{
-			echo("FAILURE");
-		}
-		echo($answer);
-	}
-
-?>
 </body>
 </html>

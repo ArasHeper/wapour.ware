@@ -1,8 +1,12 @@
-
+<?php
+session_start();
+?>
 <!DOCTYPE html>
-<html >
+
+
+<html>
 <head>
-  <style>
+	<style>
 		table.top
 		{
 			font-family:Arial,Helvetica,sans-serif;
@@ -95,56 +99,116 @@
 		form button:hover {
 		  background: #ff5252;
 		}
+		
+		header {
+		  background: #FF3838;
+		  padding: 30px 20px;
+		  color: white;
+		  font-size: 1.2em;
+		  font-weight: 600;
+		  border-radius: 10px 10px 0 0;
+		}
 
 	</style>
   <meta charset="UTF-8">
-  <title>Wapour...Ware</title>
-  
+  <title>Wapour....Ware</title>
 </head>
 
 <body>
-<table width="1024" align="right" >
-<tr >
-<td>
-<form action="login.php" method="post">
-  <header>Login</header>
-  <label>username </label>
-  <input type='text' id='username' name='username' /><br/>
-  <label>Password </label>
-  <input type='password' id='password' name='password' /><br/>
-  <button type="submit" name="login" value = "post"> Login </button>
-</form>
-</td></tr>
-<tr><td>
-<form action="signup.php" >
- <button > Register a New Account </button>
-</form>
 
-</td></tr>
+<?php
+if(isset($_POST['games'])){
+		header("Location: mygames.php");
+		exit;
+	}
+if(isset($_POST['friends'])){
+	header("Location: friends.php");
+	exit;
+}
+?>
+<table>
+<tr><td>
+<table class="top" width ="1024">
+<tr>
+<td>
+ <a class="top" href="store.php">Store</a>
+</td>
+<td>
+ <a class="top" href="profileinfo.php">Profile</a>
+</td>
+<td>
+ <a class="top" href="friends.php">Social</a>
+</td>
+<td>
+ <a class="top" href="mygames.php">Library</a>
+</td>
+<td>
+ <a class="top" href="gifts.php">Gifts</a>
+</td>
+</tr>
+</td>
+</tr>
 </table>
+</tr>
+<tr>
+<td>
+<form action="profileinfo.php" method="post">
+  <header>Friend Profile</header>,
 
 <?php
 require_once 'src/Database.php';
+$database = new Database();
+$userArray = $database->getUser($_SESSION["friendid"]);
+$name  = $userArray[1];
+$nickname = $userArray[5];
+$birtdate = $userArray[2];
+$country = $userArray[6];
+$desc = $userArray[3];
 
-if(isset($_POST['login'])){
-		$var = $database = new Database();
-	
-		$username= $_POST['username'];
-		$password = $_POST['password'];
+echo "<label> Name: $name </label> <br>";
+echo "<label> Nick Name: $nickname </label> <br>";
+echo "<label> Birth Date: $birtdate </label> <br>";
+echo "<label> Country: $country </label> <br>";
+echo "<label> Description: $desc </label> <br>";
+
+?>
+  <button type="submit" name="games" value = "post"> My Games </button>
+  <button type="submit" name="friends" value = "post"> Friends </button>
+
+</form>
+
+</td></tr>
+<tr><td>
+<form action="login.php" >
+  <button > Return to Login Page </button>
+</form>
+
+</td></tr>
+
+<tr><td>
+
+</td></tr>
+
+</table>
+<?php
+
+if(isset($_POST['abc'])){
+	$var;
+	$var = 2;//gggg.func(sadasd);
+	$var = $database = new Database();
+    //$var = $database->function __construct();
+	if($var == 1){
 		
-		$answer = $database->login($username, $password);
-		if($answer != -1){
-			session_start();
-			
-			$_SESSION["userid"] = $answer ;
-			header("Location: store.php");
-			exit;
-		}
-		else{
-			echo("FAILURE");
-		}
-		echo($answer);
+		//header("Location: login.php");
+		echo("SUCCCESSS");
 	}
+	else{
+		//header("Location: login.php");
+		echo("FAILURE");
+		//exit;
+	}
+	
+}
 ?>
 </body>
 </html>

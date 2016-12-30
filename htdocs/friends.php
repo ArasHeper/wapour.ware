@@ -1,3 +1,19 @@
+<?php
+session_start();
+?>
+<?php
+if(isset($_POST['toFriendPage'])){
+	$val= $_POST['hiddenVar'];
+	
+	$_SESSION["friendid"] = $val;
+	
+	//goto game page
+	header("Location: friendprofileinfo.php");
+	exit;	
+}
+?>
+
+
 
 <!DOCTYPE html>
 <html >
@@ -37,6 +53,14 @@
 		  border-radius: 10px;
 		}
 		form header {
+		  background: #FF3838;
+		  padding: 30px 20px;
+		  color: white;
+		  font-size: 1.2em;
+		  font-weight: 600;
+		  border-radius: 10px 10px 0 0;
+		}
+		header {
 		  background: #FF3838;
 		  padding: 30px 20px;
 		  color: white;
@@ -104,47 +128,64 @@
 
 <body>
 <table width="1024" align="right" >
-<tr >
+<tr><td>
+<table class="top" width ="1024">
+<tr>
 <td>
-<form action="login.php" method="post">
-  <header>Login</header>
-  <label>username </label>
-  <input type='text' id='username' name='username' /><br/>
-  <label>Password </label>
-  <input type='password' id='password' name='password' /><br/>
-  <button type="submit" name="login" value = "post"> Login </button>
-</form>
+ <a class="top" href="store.php">Store</a>
+</td>
+<td>
+ <a class="top" href="profileinfo.php">Profile</a>
+</td>
+<td>
+ <a class="top" href="friends.php">Social</a>
+</td>
+<td>
+ <a class="top" href="mygames.php">Library</a>
+</td>
+<td>
+ <a class="top" href="gifts.php">Gifts</a>
+</td>
+</tr>
+</td>
+</tr>
+</table>
+</tr>
+<tr>
+<td>
+
+  <header>Friends</header>
+	<?php
+	$_SESSION["viewedGame"] = NULL;
+	if(session_status() == PHP_SESSION_ACTIVE){
+		require_once 'src/Database.php';
+		//pull the data from sql database
+		$database = new Database();
+		$array = $database->showUserFriends($_SESSION["userid"], '');
+		//echo a form for each of them, like this;
+		$count = count($array);
+		for( $i = 0; $i < $count; $i++){
+			$game = $array[$i];
+			$id = "toFriendPage:" + $i;
+			echo '
+			<form action="friends.php" method="post">
+				<input type="hidden" id=$id name="hiddenVar" value='.$game['ide'].'/>
+				<button type="submit" name="toFriendPage" value = "post">'; echo "$game[name]";  echo '</button>
+			</form>';
+		}
+	}
+	else {
+		header("Location: login.php");
+		exit;	
+	}
+	?>
+
 </td></tr>
 <tr><td>
-<form action="signup.php" >
- <button > Register a New Account </button>
-</form>
 
 </td></tr>
 </table>
 
-<?php
-require_once 'src/Database.php';
 
-if(isset($_POST['login'])){
-		$var = $database = new Database();
-	
-		$username= $_POST['username'];
-		$password = $_POST['password'];
-		
-		$answer = $database->login($username, $password);
-		if($answer != -1){
-			session_start();
-			
-			$_SESSION["userid"] = $answer ;
-			header("Location: store.php");
-			exit;
-		}
-		else{
-			echo("FAILURE");
-		}
-		echo($answer);
-	}
-?>
 </body>
 </html>

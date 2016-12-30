@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html >
 <head>
@@ -106,45 +105,44 @@
 <table width="1024" align="right" >
 <tr >
 <td>
-<form action="login.php" method="post">
-  <header>Login</header>
-  <label>username </label>
-  <input type='text' id='username' name='username' /><br/>
-  <label>Password </label>
-  <input type='password' id='password' name='password' /><br/>
-  <button type="submit" name="login" value = "post"> Login </button>
+<form action="search.php" method="post">
+  <header>Game Search</header>
+  <label>Search game </label>
+  <input type='text' id='gamename' name='gamename' /><br/>
+  <button type="submit" name="search" value = "post"> Submit </button>
 </form>
 </td></tr>
 <tr><td>
-<form action="signup.php" >
- <button > Register a New Account </button>
-</form>
+
 
 </td></tr>
 </table>
 
 <?php
-require_once 'src/Database.php';
+require_once 'C:/xampp/htdocs/databaseservice/Database.php';
 
-if(isset($_POST['login'])){
+if(isset($_POST['search'])){
 		$var = $database = new Database();
 	
-		$username= $_POST['username'];
-		$password = $_POST['password'];
+		$games = $_POST['gamename'];
 		
-		$answer = $database->login($username, $password);
-		if($answer != -1){
-			session_start();
-			
-			$_SESSION["userid"] = $answer ;
-			header("Location: store.php");
-			exit;
-		}
-		else{
+		// $val = $_SESSION["userid"];
+		$answer = $database->search($gamename, 1, TRUE);
+		if($answer = -1){
 			echo("FAILURE");
 		}
-		echo($answer);
-	}
+		else{
+			foreach ($game as $games ) {
+				//echo "<br>'".$game['IDGame']."'<br>";
+				echo "Oldu!";
+			}
+		}
+}
+
+
+
+	
+
 ?>
 </body>
 </html>

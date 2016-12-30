@@ -1,3 +1,15 @@
+<?php
+session_start();
+?>
+<?php
+if(isset($_POST['buy'])){
+	//goto game page
+	header("Location: purchase.php");
+	exit;	
+}
+?>
+
+
 
 <!DOCTYPE html>
 <html >
@@ -104,47 +116,98 @@
 
 <body>
 <table width="1024" align="right" >
-<tr >
+<tr><td>
+<table class="top" width ="1024">
+<tr>
 <td>
-<form action="login.php" method="post">
-  <header>Login</header>
-  <label>username </label>
-  <input type='text' id='username' name='username' /><br/>
-  <label>Password </label>
-  <input type='password' id='password' name='password' /><br/>
-  <button type="submit" name="login" value = "post"> Login </button>
-</form>
+ <a class="top" href="store.php">Store</a>
+</td>
+<td>
+ <a class="top" href="profileinfo.php">Profile</a>
+</td>
+<td>
+ <a class="top" href="http://www.bilkent.edu.tr/bilkent-tr/index.html">Social</a>
+</td>
+<td>
+ <a class="top" href="http://www.bilkent.edu.tr/bilkent-tr/index.html">Library</a>
+</td>
+<td>
+ <a class="top" href="http://www.bilkent.edu.tr/bilkent-tr/index.html">Gifts</a>
+</td>
+</tr>
+</td>
+</tr>
+</table>
+</tr>
+<tr>
+<td>
+
+
+	<?php
+	if(session_status() == PHP_SESSION_ACTIVE){
+		require_once 'src/Database.php';
+		$database = new Database();
+		$game = $database->getGame($_SESSION["viewed_game"]);
+		$owned = $database->doesOwn( $_SESSION['viewed_game'],$_SESSION["userid"]); 
+			echo' <form>';
+		  echo '<header>';
+		  echo "".$_SESSION["viewed_game"]."";
+		  echo '</header>';
+		  echo' </form>';
+
+		if($owned != 1){
+			echo'
+			<form action="signup.php" >
+				<button type="submit" name="buy" value = "post">Buy</button>
+			</form>';
+			$price = $game[4];
+			$desc = $game[3];
+			$sold= $game[2];
+			$age = $game[1];
+			$genre = $game[0];
+			$isMult = $game[5];
+			echo" <form>
+			<label>Genre: </label>
+			<label>$genre</label>
+			</form>";
+			echo" <form>
+			<label>Price: </label>
+			<label>$price</label>
+			</form>";
+			echo" <form>
+			<label>Copies Sold: </label>
+			<label>$sold</label>
+			</form>";
+			echo" <form>
+			<label>Multiplayer: </label>
+			<label>$isMult</label>
+			</form>";
+			echo" <form>
+			<label>Age: </label>
+			<label>$age</label>
+			</form>";
+			
+			echo" <form>
+			<label>Description: </label>
+			<label>$desc</label>
+			</form>";
+		}
+		else{
+			echo'
+			<button type="submit" name="Play" value = "post">Play</button>';
+		}
+	}
+	else {
+		header("Location: login.php");
+		exit;	
+	}
+	?>
+
 </td></tr>
 <tr><td>
-<form action="signup.php" >
- <button > Register a New Account </button>
-</form>
+
 
 </td></tr>
 </table>
-
-<?php
-require_once 'src/Database.php';
-
-if(isset($_POST['login'])){
-		$var = $database = new Database();
-	
-		$username= $_POST['username'];
-		$password = $_POST['password'];
-		
-		$answer = $database->login($username, $password);
-		if($answer != -1){
-			session_start();
-			
-			$_SESSION["userid"] = $answer ;
-			header("Location: store.php");
-			exit;
-		}
-		else{
-			echo("FAILURE");
-		}
-		echo($answer);
-	}
-?>
 </body>
 </html>

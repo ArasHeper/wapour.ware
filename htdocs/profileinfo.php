@@ -1,3 +1,6 @@
+<?php
+session_start();
+?>
 <!DOCTYPE html>
 
 
@@ -96,6 +99,15 @@
 		form button:hover {
 		  background: #ff5252;
 		}
+		
+		header {
+		  background: #FF3838;
+		  padding: 30px 20px;
+		  color: white;
+		  font-size: 1.2em;
+		  font-weight: 600;
+		  border-radius: 10px 10px 0 0;
+		}
 
 	</style>
   <meta charset="UTF-8">
@@ -103,6 +115,28 @@
 </head>
 
 <body>
+
+<?php
+require_once 'src/Database.php';
+$database = new Database();
+if(isset($_POST['games'])){
+	header("Location: mygames.php");
+	exit;
+}
+if(isset($_POST['friends'])){
+	header("Location: friends.php");
+	exit;
+}
+if(isset($_POST['deleteprofile'])){
+	$database->deleteUser($_SESSION['userid']);
+	header("Location: login.php");
+	exit;
+}
+if(isset($_POST['editprofile'])){
+	header("Location: editprofile.php");
+	exit;
+}
+?>
 <table>
 <tr><td>
 <table class="top" width ="1024">
@@ -111,16 +145,16 @@
  <a class="top" href="store.php">Store</a>
 </td>
 <td>
- <a class="top" href="http://www.bilkent.edu.tr/bilkent-tr/index.html">Profile</a>
+ <a class="top" href="profileinfo.php">Profile</a>
 </td>
 <td>
- <a class="top" href="http://www.bilkent.edu.tr/bilkent-tr/index.html">Social</a>
+ <a class="top" href="friends.php">Social</a>
 </td>
 <td>
- <a class="top" href="http://www.bilkent.edu.tr/bilkent-tr/index.html">Library</a>
+ <a class="top" href="mygames.php">Library</a>
 </td>
 <td>
- <a class="top" href="http://www.bilkent.edu.tr/bilkent-tr/index.html">Gifts</a>
+ <a class="top" href="gifts.php">Gifts</a>
 </td>
 </tr>
 </td>
@@ -129,45 +163,34 @@
 </tr>
 <tr>
 <td>
-<form action="signup.php" method="post">
-  <header>Sign up</header>
-  <label> User Name </label>
-  <input type='text' id='username' name='username' /><br/>
-  <div class="help">At least 6 character</div>
-  
-  <label>e-mail </label>
-  <input type='text' id='email' name='email' /><br/>
-  
-  <label> Name </label>
-  <input type='text' id='name' name='name' /><br/>
-   
-  <label> Nick Name </label>
-  <input type='text' id='nickname' name='nickname' /><br/>
-  
-  <label>Password </label>
-  <input type='password' id='password' name='password' /><br/>
-  <div class="help">At least 6 character</div>
+<form action="profileinfo.php" method="post">
+  <header>User Profile</header>,
+  <button type="submit" name="games" value = "post"> My Games </button>
+  <button type="submit" name="friends" value = "post"> Friends </button>
+ 
+<?php
+$userArray = $database->getUser($_SESSION['userid']);
+$name  = $userArray[1];
+$nickname = $userArray[5];
+$birtdate = $userArray[2];
+$country = $userArray[6];
+$desc = $userArray[3];
 
-  <label>Re-enter Password </label>
-  <input type='password' id='password2' name='password2' /><br/>
-  
-  <label> Birth date </label>
-  <input type='text' id='birtdate' name='birtdate' /><br/>
-  <div class="help">DD/MM/YYYY</div>
+echo " <br> <br><label> Name: $name </label> <br>";
+echo "<label> Nick Name: $nickname </label> <br>";
+echo "<label> Birth Date: $birtdate </label> <br>";
+echo "<label> Country: $country </label> <br>";
+echo "<label> Description: $desc </label> <br>";
 
-  <label>Country </label>
-  <input type='text' id='country' name='country' /><br/>
-  
-  <button type="submit" name="abc" value = "post"> Sign up </button>
+?>
+ <button type="submit" name="editprofile" value = "post"> Edit Profile </button>
+  <button type="submit" name="deleteprofile" value = "post"> Delete Profile </button>
 
-
-<a />
 </form>
 
 </td></tr>
 <tr><td>
 <form action="login.php" >
-
   <button > Return to Login Page </button>
 </form>
 
@@ -179,7 +202,6 @@
 
 </table>
 <?php
-require_once 'src/Database.php';
 
 if(isset($_POST['abc'])){
 	$var;
@@ -190,23 +212,6 @@ if(isset($_POST['abc'])){
 		
 		//header("Location: login.php");
 		echo("SUCCCESSS");
-		$password = $_POST['password'];
-		$password2 = $_POST['password2'];
-		if( $password == $password2){
-			$name = $_POST['name'];
-			$username = $_POST['username'];
-			$nickname = $_POST['nickname'];
-			$email = $_POST['email'];
-			$password = $_POST['password'];
-			$birtdate = $_POST['birtdate'];
-			$country = $_POST['country'];
-			$desc = '';
-			$answer = $database->register($name, $birtdate, $desc, $email, $nickname, $country,$username,$password);
-			header("Location: login.php");
-			exit;
-		}else{
-			echo'Wrong input.';
-		}
 	}
 	else{
 		//header("Location: login.php");

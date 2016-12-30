@@ -1,3 +1,6 @@
+<?php
+session_start();
+?>
 <!DOCTYPE html>
 
 
@@ -111,16 +114,16 @@
  <a class="top" href="store.php">Store</a>
 </td>
 <td>
- <a class="top" href="http://www.bilkent.edu.tr/bilkent-tr/index.html">Profile</a>
+ <a class="top" href="profileinfo.php">Profile</a>
 </td>
 <td>
- <a class="top" href="http://www.bilkent.edu.tr/bilkent-tr/index.html">Social</a>
+ <a class="top" href="friends.php">Social</a>
 </td>
 <td>
- <a class="top" href="http://www.bilkent.edu.tr/bilkent-tr/index.html">Library</a>
+ <a class="top" href="mygames.php">Library</a>
 </td>
 <td>
- <a class="top" href="http://www.bilkent.edu.tr/bilkent-tr/index.html">Gifts</a>
+ <a class="top" href="gifts.php">Gifts</a>
 </td>
 </tr>
 </td>
@@ -130,37 +133,36 @@
 <tr>
 <td>
 <form action="signup.php" method="post">
-  <header>Sign up</header>
-  <label> User Name </label>
-  <input type='text' id='username' name='username' /><br/>
-  <div class="help">At least 6 character</div>
+<?php
+  echo '<header>$_SESSION["viewed_game"]</header>'; 
+ ?>
+  <label> Is Gift <input type='checkbox' id='gift' name='gift' value = 'on' /><br/>
+<?php
+	require_once 'src/Database.php';
+	$game = $_SESSION["viewed_game"];
+	$price = ($database -> getGame("$game"));
+	$price = $price['price'];
+	echo '<label>$price</label>'; 
   
-  <label>e-mail </label>
-  <input type='text' id='email' name='email' /><br/>
-  
-  <label> Name </label>
-  <input type='text' id='name' name='name' /><br/>
-   
-  <label> Nick Name </label>
-  <input type='text' id='nickname' name='nickname' /><br/>
-  
-  <label>Password </label>
-  <input type='password' id='password' name='password' /><br/>
-  <div class="help">At least 6 character</div>
+ ?>
+  <label> Receiver </label>
+  <input type='text' id='receiver' name='reciever' /><br/>
 
-  <label>Re-enter Password </label>
-  <input type='password' id='password2' name='password2' /><br/>
+  <label>Card no</label>
+  <input type='text' id='cardNo' name='cardNo' /><br/>
+
+  <label>Expiration date </label>
+  <input type='text' id='expDate' name='expDate' /><br/>
   
-  <label> Birth date </label>
-  <input type='text' id='birtdate' name='birtdate' /><br/>
-  <div class="help">DD/MM/YYYY</div>
+  <label> CVC </label>
+  <input type='text' id='cvc' name='cvc' /><br/>
 
-  <label>Country </label>
-  <input type='text' id='country' name='country' /><br/>
+  <label>Msg:</label>
+  <input type='text' id='msg' name='msg' /><br/>
   
-  <button type="submit" name="abc" value = "post"> Sign up </button>
+  <button type="submit" name="buy" value = "post">  Continue</button>
 
-
+	<button type="submit" name="Save Card" value = "post">  Save Vard</button>
 <a />
 </form>
 
@@ -178,6 +180,40 @@
 </td></tr>
 
 </table>
+<?php
+	if(session_status() == PHP_SESSION_ACTIVE){
+		if($_POST['gift'] == 'on'){
+			
+		}
+		else{
+			$name = $_POST['name'];
+			$username = $_POST['username'];
+			$nickname = $_POST['nickname'];
+			$email = $_POST['email'];
+			$password = $_POST['password'];
+			$birtdate = $_POST['birtdate'];
+			$country = $_POST['country'];
+		}
+		require_once 'src/Database.php';
+		//pull the data from sql database
+		$array;
+		//echo a form for each of them, like this;
+		$count = count($array);
+		for( $i; $i < $count; $i++){
+			$game = $array[$i];
+			$id = "toGamePage:" + $i;
+			echo '
+			<form action="store.php" method="post">
+				<input type="hidden" id=$id name="hiddenVar" value=$game />
+				<button type="submit" name="toGamePage" value = "post"> $game </button>
+			</form>';
+		}
+	}
+	else {
+		header("Location: login.php");
+		exit;	
+	}
+	?>
 <?php
 require_once 'src/Database.php';
 
