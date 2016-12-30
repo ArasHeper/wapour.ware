@@ -12,10 +12,10 @@ class Database
 
     function __construct()
     {	
-		$servername = "139.179.103.132:3306";//this is for my machine we can change it?
-		$username = "Tcan";
-        //$servername = "localhost";//this is for my machine we can change it?
-        //$username = "root";
+		//$servername = "139.179.103.132:3306";//this is for my machine we can change it?
+		//$username = "Tcan";
+        $servername = "localhost";//this is for my machine we can change it?
+        $username = "root";
         $password = "123123";
         $dbname = "CS353";
 
@@ -445,7 +445,7 @@ class Database
             $sql = "SELECT Game.name as name, genre, unit_sold, price, Game.description as description, isMultiplayer, idGame
                 FROM Game, User, Owns
                 WHERE Game.idGame = Owns.OwnedGame and Owns.Owner = User.IDUser and '$userID' = User.IDUser";
-        
+
 
 
         $result = $this->conn->query($sql);
@@ -515,6 +515,32 @@ class Database
             echo "No user";
             return -1;
         }
+    }
+
+    function deleteUser($userID)
+    {
+        $sql = "DELETE FROM User WHERE idUser = $userID";
+
+        if ($this->conn->query($sql) === TRUE) {
+            echo "Success Delete";
+        } else {
+            echo "Error: " . $sql . "<br>" . $this->conn->error;
+        }
+    }
+
+
+    function deleteFriend($user1, $user2)
+    {
+        $sql = "DELETE FROM Friends 
+                    WHERE '$user1' = Friend1 and '$user2' = Friend2";
+
+        if ($this->conn->query($sql) === TRUE) {
+            echo "Success";
+        } else {
+            echo "Error: " . $sql . "<br>" . $this->conn->error;
+        }
+
+
     }
 
     function doesOwn($gameID, $userID) {
