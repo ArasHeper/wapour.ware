@@ -12,11 +12,10 @@ class Database
 
     function __construct()
     {	
-		//$servername = "139.179.206.167:3306";//this is for my machine we can change it?
-		//$servername = "172.20.10.3:3306";//this is for my machine we can change it?
-		//$username = "Tcan";
-        $servername = "localhost";//this is for my machine we can change it?
-        $username = "root";
+		$servername = "139.179.103.132:3306";//this is for my machine we can change it?
+		$username = "Tcan";
+        //$servername = "localhost";//this is for my machine we can change it?
+        //$username = "root";
         $password = "123123";
         $dbname = "CS353";
 
@@ -104,7 +103,7 @@ class Database
                 $unit_sold = $row["unit_sold"];
                 $description = $row["description"];
                 $price = $row["price"];
-                $isMult = $row["ismultiplayer"];
+                $isMult = $row["isMultiplayer"];
             }
             $arr = array($genre,$age,$unit_sold,$description,$price,$isMult);
             echo "Game retrieved\n";
@@ -172,7 +171,7 @@ class Database
     {
         $sql = "SELECT *
                 FROM USER
-                WHERE User.userid = '$userid' ";
+                WHERE IDUser = '$userid' ";
 
         $result = $this->conn->query($sql);
         echo "result: " . $result->num_rows;
@@ -441,25 +440,33 @@ class Database
     }
 
     function showUserGames($userID) {
-        // Check if show including owned
-        $sql = "SELECT *
- 				FROM Game INNER JOIN Owns INNER JOIN User
- 				WHERE Game.idGame = Owns.OwnedGame and Owns.Owner = User.IDUser and '$userID' = User.IDUser
- 				ORDER BY Game.name ASC";
 
 
+            $sql = "SELECT Game.name as name, genre, unit_sold, price, Game.description as description, isMultiplayer, idGame
+                FROM Game, User, Owns
+                WHERE Game.idGame = Owns.OwnedGame and Owns.Owner = User.IDUser and '$userID' = User.IDUser";
+        
 
 
         $result = $this->conn->query($sql);
-        echo "result: " . $result->num_rows;
+        //echo "result: " . $result->num_rows;
 
         $games = array();
+        $count = 0;
         if ($result->num_rows > 0) {
             while($row = $result->fetch_assoc()) {
-                echo "\nid: " . $row["idGame"]. " - Name: " . $row["name"]. " " . $row["genre"]. "<br>";
-                $games = array_push($games, $row);
+                $idGame = $row["idGame"];
+                $name = $row["name"];
+                $genre = $row["genre"];
+                $sold= $row["unit_sold"];
+                $description  = $row["description"];
+                $price = $row["price"];
+                $isMult = $row["isMultiplayer"];
+                $game = array($idGame,$name,$genre,$sold,$description,$price,$isMult);
+                $games[$count] = $game;
+                $count++;
             }
-            return 1;
+            return $games;
         } else {
             echo "No user";
             return -1;
@@ -513,12 +520,10 @@ class Database
     function doesOwn($gameID, $userID) {
 
         // Check if show including owned
-        $sql = "SELECT idGame
- 				FROM Game INNER JOIN Owns INNER JOIN User
- 				WHERE Game.idGame = Owns.OwnedGame and Owns.Owner = User.IDUser and '$userID' = User.IDUser and '$gameID' = Game.idGame)";
+        $sql = "SELECT idGame FROM Game,Owns,User WHERE IDGame = OwnedGame and Owner = IDUser and '$userID' = IDUser and '$gameID' = idGame";
 
         $result = $this->conn->query($sql);
-        echo "result: " . $result->num_rows;
+        //echo "result: " . $result->num_rows;
 
         if ($result->num_rows > 0) {
             echo "User owns the game";
