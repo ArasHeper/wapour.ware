@@ -167,6 +167,134 @@ class Database
         return true;
     }
 
+    function filterByGenre($genre, $userID, $showOwned) {
+        if ($showOwned === TRUE) {
+            if ($genre === 'ALL') {
+                $sql =  "SELECT * FROM Game";
+            }
+            else {
+                $sql = "SELECT * FROM Game where '$genre' = genre";
+            }
+        }
+        else {
+            if ($genre === 'ALL') {
+                $sql = "SELECT * from Game where idGame not in (SELECT idGame
+                FROM Game, User, Owns
+                WHERE Game.idGame = Owns.OwnedGame and Owns.Owner = User.IDUser and '$userID' = User.IDUser)";
+            }
+            else {
+                $sql = "SELECT * from Game where idGame not in (SELECT idGame
+                FROM Game, User, Owns
+                WHERE Game.idGame = Owns.OwnedGame and Owns.Owner = User.IDUser and '$userID' = User.IDUser and Game.genre = '$genre')";            }
+        }
+
+        $sql = "SELECT * FROM Game where '$genre' = genre";
+
+        $result = $this->conn->query($sql);
+        //echo "result: " . $result->num_rows;
+
+        $games = array();
+        $count = 0;
+        if ($result->num_rows > 0) {
+            while($row = $result->fetch_assoc()) {
+                $idGame = $row["idGame"];
+                $name = $row["name"];
+                $genre = $row["genre"];
+                $sold= $row["unit_sold"];
+                $description  = $row["description"];
+                $price = $row["price"];
+                $isMult = $row["isMultiplayer"];
+                $game = array($idGame,$name,$genre,$sold,$description,$price,$isMult);
+                $games[$count] = $game;
+                $count++;
+            }
+            return $games;
+        } else {
+            echo "No user";
+            return -1;
+        }
+    }
+
+    function lessThanPrice($price) {
+        $sql = "SELECT * FROM Game where '$price' < genre";
+
+        $result = $this->conn->query($sql);
+        //echo "result: " . $result->num_rows;
+
+        $games = array();
+        $count = 0;
+        if ($result->num_rows > 0) {
+            while($row = $result->fetch_assoc()) {
+                $idGame = $row["idGame"];
+                $name = $row["name"];
+                $genre = $row["genre"];
+                $sold= $row["unit_sold"];
+                $description  = $row["description"];
+                $price = $row["price"];
+                $isMult = $row["isMultiplayer"];
+                $game = array($idGame,$name,$genre,$sold,$description,$price,$isMult);
+                $games[$count] = $game;
+                $count++;
+            }
+            return $games;
+        } else {
+            echo "No user";
+            return -1;
+        }
+    }
+
+
+    function gameStatistics() {
+        $sql = "SELECT count(idGame) as c, name from Owns, Game where idGame = OwnedGame group by name";
+
+        $result = $this->conn->query($sql);
+
+        if ($result->num_rows > 0) {
+            while($row = $result->fetch_assoc())
+            {
+                $bought = $row["c"];
+                $name = $row["name"];
+                echo $name . ", ";
+                echo $bought . "<br>";
+            }
+            $arr = array($name,$bought);
+            //echo $arr[0];
+
+            echo "Games retrieved\n";
+            return $arr;
+        } else {
+            echo "No such game";
+            return -1;
+        }
+
+
+    }
+    function userStatistics() {
+        $sql = "SELECT count(idUser) as c, nickname
+                FROM User, Owns
+                WHERE idUser = Owner
+                Group By name";
+
+        $result = $this->conn->query($sql);
+        echo "result: " . $result->num_rows;
+
+        $games = array();
+        $count = 0;
+        if ($result->num_rows > 0) {
+            while($row = $result->fetch_assoc()) {
+                $bought = $row["c"];
+                $nickname = $row["nickname"];
+                $game = array($nickname,$bought);
+                $games[$count] = $game;
+                $count++;
+            }
+            return $games;
+        } else {
+            echo "No user";
+            return -1;
+        }
+    }
+
     function getUser($userid)
     {
         $sql = "SELECT *
