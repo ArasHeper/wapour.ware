@@ -55,7 +55,7 @@ class Database
             echo "Error: " . $sql . "<br>" . $this->conn->error;
         }
     }
-
+    //returns the id of the user
     function login($username,$password)
     {
 
@@ -114,26 +114,6 @@ class Database
     //username is owner of the credit card
     function createCreditCard($id,$number,$cvc,$expDate)
     {
-        /*$sql = "SELECT *
-                FROM user
-                WHERE email = '$email' ";
-
-        $result = $this->conn->query($sql);
-        //echo "result: " . $result->num_rows;
-        $id=-1;
-        if ($result->num_rows > 0) {
-            while ($row = $result->fetch_assoc())
-                $id = $row["idUser"];
-            echo "id is: " . $id . "\n";
-        }
-        else
-        {
-            echo "User retrieval error";
-            return false;
-        }*/
-
-
-
 
         $sql = "INSERT INTO Credit_Card(number, cvc, exp) 
                 VALUES ($number, $cvc, '$expDate');";
@@ -157,6 +137,380 @@ class Database
         }
 
     }
+
+    //Buys the game with specified game and user id
+    function buyGame($gameID,$userID)
+    {
+
+        $sql = "INSERT INTO OWNS 
+                VALUES ($gameID, $userID);";
+
+        if ($this->conn->query($sql) === TRUE) {
+            echo "Game bought successfully\n";
+        } else {
+            echo "Error: " . $sql . "<br>" . $this->conn->error;
+            return false;
+        }
+
+    }
+
+    function getUser($userid)
+    {
+        $sql = "SELECT *
+                FROM USER
+                WHERE User.userid = '$userid' ";
+
+        $result = $this->conn->query($sql);
+        echo "result: " . $result->num_rows;
+
+        if ($result->num_rows > 0) {
+            while($row = $result->fetch_assoc())
+            {
+                $idUser = $row["idUser"];
+                $name = $row["name"];
+                $birth_date = $row["birth_date"];
+                $description = $row["description"];
+                $email = $row["email"];
+                $nickname = $row["nickname"];
+                $country = $row["country"];
+            }
+            $arr = array($idUser,$name,$birth_date,$description,$email,$nickname,$country);
+            echo "User Retrieved\n";
+            return $arr;
+        } else {
+            echo "No such game";
+            return -1;
+
+        }
+    }
+
+    //Updated profile name
+    function editProfileName($userid, $name)
+    {
+
+
+        $sql = "UPDATE User SET name = '$name' WHERE iduser = '$userid'";
+
+        if ($this->conn->query($sql) === TRUE) {
+            echo "Profile Updated successfully\n";
+        } else {
+            echo "Error: " . $sql . "<br>" . $this->conn->error;
+            return false;
+        }
+
+    }
+    //Updated profile birthdate
+    function editProfileBirthdate($userid, $birtdate)
+    {
+        $sql = "UPDATE User SET birth_date = '$birtdate' WHERE iduser = '$userid'";
+
+        if ($this->conn->query($sql) === TRUE) {
+            echo "Profile Updated successfully\n";
+        } else {
+            echo "Error: " . $sql . "<br>" . $this->conn->error;
+            return false;
+        }
+
+    }
+    //Updated profile description
+    function editProfileDesc($userid, $desc)
+    {
+        $sql = "UPDATE User SET description = '$desc' WHERE iduser = '$userid'";
+
+        if ($this->conn->query($sql) === TRUE) {
+            echo "Profile Updated successfully\n";
+        } else {
+            echo "Error: " . $sql . "<br>" . $this->conn->error;
+            return false;
+        }
+
+    }
+    //Updated profile name
+    function editProfileEmail($userid, $email)
+    {
+
+
+        $sql = "UPDATE User SET email = '$email' WHERE iduser = '$userid'";
+
+        if ($this->conn->query($sql) === TRUE) {
+            echo "Profile Updated successfully\n";
+        } else {
+            echo "Error: " . $sql . "<br>" . $this->conn->error;
+            return false;
+        }
+
+    }
+    //Updated profile name
+    function editProfileNickname($userid, $nickname)
+    {
+
+
+        $sql = "UPDATE User SET nickname = '$nickname' WHERE iduser = '$userid'";
+
+        if ($this->conn->query($sql) === TRUE) {
+            echo "Profile Updated successfully\n";
+        } else {
+            echo "Error: " . $sql . "<br>" . $this->conn->error;
+            return false;
+        }
+
+    }
+    //Updated profile name
+    function editProfileCountry($userid,$country)
+    {
+
+
+        $sql = "UPDATE User SET country = '$country' WHERE iduser = '$userid'";
+
+        if ($this->conn->query($sql) === TRUE) {
+            echo "Profile Updated successfully\n";
+        } else {
+            echo "Error: " . $sql . "<br>" . $this->conn->error;
+            return false;
+        }
+
+    }
+
+    //todo
+    function passChange($userid,$newpassword)
+    {
+
+    }
+
+    function userSearch($keyword) {
+        /*$sql = "SELECT t2.name as name, t2.groupID as groupide, (t2.IDUser IS NOT NULL) AS AlreadyIn
+                FROM (User LEFT JOIN ( SELECT * FROM Friends WHERE Friends.Friend2 = IDUser ) AS t1
+                ON t1.IDUser = IDUser) AS t2
+                ORDER BY t2.name ASC
+                WHERE t2.name LIKE ‘%@keyword%’";*/
+
+        $sql = "SELECT IDUser, name FROM User WHERE User.Name LIKE '%$keyword%'";
+
+
+        $result = $this->conn->query($sql);
+        echo "result: " . $result->num_rows;
+
+        if ($result->num_rows > 0) {
+            while($row = $result->fetch_assoc()) {
+                echo "\nid: " . $row["IDUser"]. " - Name: " . $row["name"] . "<br>\n";
+            }
+            return 1;
+        } else {
+            echo "No people";
+            return -1;
+        }
+
+    }
+
+
+    // NOT OWNED CAN BE TRUE FALSE
+    function show($userID, $showOwned) {
+        /*$sql = "WITH Belonging (idGame, gameName, genre, STATUS) as (SELECT idGame, Game.name AS gameName, genre, 'Owned' as STATUS
+                 FROM Game INNER JOIN Owns INNER JOIN User
+                 WHERE Game.idGame = Owns.OwnedGame and Owns.Owner = User.IDUser and '$userID' = User.IDUser)
+                 Select * from Belonging
+                 UNION all
+                 Select idGame, name AS gameName, genre, 'Not Owned' as STATUS FROM Game WHERE idGame not in (Select idGame from Belonging)";*/
+
+        //$sql = "Select idGame, name AS gameName, genre, 'Not Owned' as STATUS FROM Game";
+
+        // Check if show including owned
+        if ($showOwned === TRUE) {
+            $sql = "SELECT * from Game";
+        }
+        else {
+            $sql = "SELECT * from Game where not exists (SELECT idGame, Game.name AS gameName, genre, 'Owned' as STATUS
+ 				FROM Game INNER JOIN Owns INNER JOIN User
+ 				WHERE Game.idGame = Owns.OwnedGame and Owns.Owner = User.IDUser and '$userID' = User.IDUser)";
+        }
+
+        /*$sql = "SELECT idGame, Game.name AS gameName, genre, 'Owned' as STATUS
+        FROM (Game INNER JOIN Owns INNER JOIN User
+        WHERE Game.idGame = Owns.OwnedGame and Owns.Owner = User.IDUser and '$userID' = User.IDUser) as Belonging
+        Select * from Belonging
+        UNION all
+        Select idGame, name AS gameName, genre, 'Not Owned' as STATUS FROM Game WHERE idGame not in (Select idGame from Belonging)";*/
+
+
+        /*$sql =  "WITH Belonging (idGame, gameName, genre, STATUS) as (SELECT idGame, Game.name AS gameName, genre, 'Owned' as STATUS
+                FROM Game INNER JOIN Owns INNER JOIN User
+                WHERE Game.idGame = Owns.OwnedGame and Owns.Owner = User.IDUser and '$userID' = User.IDUser)";*/
+        //WHERE userID = @userID AND @displayOwned = true";
+
+
+        $result = $this->conn->query($sql);
+        echo "result: " . $result->num_rows;
+
+        if ($result->num_rows > 0) {
+            while($row = $result->fetch_assoc()) {
+                echo "\nid: " . $row["idGame"]. " - Name: " . $row["name"]. " " . $row["genre"]. "<br>";
+            }
+            return 1;
+        } else {
+            echo "No user";
+            return -1;
+        }
+    }
+
+    function showUserGames($userID) {
+        // Check if show including owned
+        $sql = "SELECT *
+ 				FROM Game INNER JOIN Owns INNER JOIN User
+ 				WHERE Game.idGame = Owns.OwnedGame and Owns.Owner = User.IDUser and '$userID' = User.IDUser
+ 				ORDER BY Game.name ASC";
+
+
+
+
+        $result = $this->conn->query($sql);
+        echo "result: " . $result->num_rows;
+
+        if ($result->num_rows > 0) {
+            while($row = $result->fetch_assoc()) {
+                echo "\nid: " . $row["idGame"]. " - Name: " . $row["name"]. " " . $row["genre"]. "<br>";
+            }
+            return 1;
+        } else {
+            echo "No user";
+            return -1;
+        }
+    }
+
+    function search($keyword, $userID, $showOwned) {
+        /*$sql = "WITH Belonging (idGame, gameName, genre, STATUS) as (SELECT idGame, Game.name AS gameName, genre, 'Owned' as STATUS
+                 FROM Game INNER JOIN Owns INNER JOIN User
+                 WHERE Game.idGame = Owns.OwnedGame and Owns.Owner = User.IDUser and '$userID' = User.IDUser)
+                 Select * from Belonging
+                 UNION all
+                 Select idGame, name AS gameName, genre, 'Not Owned' as STATUS FROM Game WHERE idGame not in (Select idGame from Belonging)";*/
+
+        //$sql = "Select idGame, name AS gameName, genre, 'Not Owned' as STATUS FROM Game";
+
+        // Check if show including owned
+        if ($showOwned === TRUE) {
+            $sql = "SELECT * from Game where Game.name LIKE '%$keyword%";
+        }
+        else {
+            $sql = "SELECT * from Game where Game.name LIKE '%$keyword%' and not exists (SELECT idGame, Game.name AS gameName, genre, 'Owned' as STATUS
+ 				FROM Game INNER JOIN Owns INNER JOIN User
+ 				WHERE Game.idGame = Owns.OwnedGame and Owns.Owner = User.IDUser and '$userID' = User.IDUser)";
+        }
+
+        /*$sql = "SELECT idGame, Game.name AS gameName, genre, 'Owned' as STATUS
+        FROM (Game INNER JOIN Owns INNER JOIN User
+        WHERE Game.idGame = Owns.OwnedGame and Owns.Owner = User.IDUser and '$userID' = User.IDUser) as Belonging
+        Select * from Belonging
+        UNION all
+        Select idGame, name AS gameName, genre, 'Not Owned' as STATUS FROM Game WHERE idGame not in (Select idGame from Belonging)";*/
+
+
+        /*$sql =  "WITH Belonging (idGame, gameName, genre, STATUS) as (SELECT idGame, Game.name AS gameName, genre, 'Owned' as STATUS
+                FROM Game INNER JOIN Owns INNER JOIN User
+                WHERE Game.idGame = Owns.OwnedGame and Owns.Owner = User.IDUser and '$userID' = User.IDUser)";*/
+        //WHERE userID = @userID AND @displayOwned = true";
+
+
+        $result = $this->conn->query($sql);
+        echo "result: " . $result->num_rows;
+
+        if ($result->num_rows > 0) {
+            while($row = $result->fetch_assoc()) {
+                echo "\nid: " . $row["idGame"]. " - Name: " . $row["name"]. " " . $row["genre"]. "<br>";
+            }
+            return 1;
+        } else {
+            echo "No user";
+            return -1;
+        }
+    }
+
+    function doesOwn($gameID, $userID) {
+        /*$sql = "WITH Belonging (idGame, gameName, genre, STATUS) as (SELECT idGame, Game.name AS gameName, genre, 'Owned' as STATUS
+                 FROM Game INNER JOIN Owns INNER JOIN User
+                 WHERE Game.idGame = Owns.OwnedGame and Owns.Owner = User.IDUser and '$userID' = User.IDUser)
+                 Select * from Belonging
+                 UNION all
+                 Select idGame, name AS gameName, genre, 'Not Owned' as STATUS FROM Game WHERE idGame not in (Select idGame from Belonging)";*/
+
+        //$sql = "Select idGame, name AS gameName, genre, 'Not Owned' as STATUS FROM Game";
+
+        // Check if show including owned
+        $sql = "SELECT idGame
+ 				FROM Game INNER JOIN Owns INNER JOIN User
+ 				WHERE Game.idGame = Owns.OwnedGame and Owns.Owner = User.IDUser and '$userID' = User.IDUser and '$gameID' = Game.idGame)";
+
+
+        /*$sql = "SELECT idGame, Game.name AS gameName, genre, 'Owned' as STATUS
+        FROM (Game INNER JOIN Owns INNER JOIN User
+        WHERE Game.idGame = Owns.OwnedGame and Owns.Owner = User.IDUser and '$userID' = User.IDUser) as Belonging
+        Select * from Belonging
+        UNION all
+        Select idGame, name AS gameName, genre, 'Not Owned' as STATUS FROM Game WHERE idGame not in (Select idGame from Belonging)";*/
+
+
+        /*$sql =  "WITH Belonging (idGame, gameName, genre, STATUS) as (SELECT idGame, Game.name AS gameName, genre, 'Owned' as STATUS
+                FROM Game INNER JOIN Owns INNER JOIN User
+                WHERE Game.idGame = Owns.OwnedGame and Owns.Owner = User.IDUser and '$userID' = User.IDUser)";*/
+        //WHERE userID = @userID AND @displayOwned = true";
+
+
+
+
+        $result = $this->conn->query($sql);
+        echo "result: " . $result->num_rows;
+
+        if ($result->num_rows > 0) {
+            echo "User owns the game";
+            return 1;
+        } else {
+            echo "The user does not own the game";
+            return -1;
+        }
+    }
+
+    // give keyword blank to fetch all
+    function showUserFriends($userID, $keyword) {
+        /*if ($keyword === '') {
+            $sql = "SELECT t2.IDUser, t2.name
+                    FROM (Friends INNER JOIN User ON Friends.Friend2 = User.IDUser) AS t2
+                    WHERE Friends.Friend1 = '$userID'
+                    ORDER BY t2.name ASC";
+        }
+        else {
+            $sql = "SELECT t2.IDUser, t2.name
+                    FROM (Friends INNER JOIN JOIN User ON Friends.Friend2 = User.IDuser) AS t2
+                    WHERE Friends.Friend1 = '$userID' and t2.name LIKE ‘%keyword%’
+                    ORDER BY t2.name ASC";
+        }*/
+
+        if ($keyword === '') {
+            $sql = "SELECT Friends.Friend2 as ide, User.name as name
+					FROM Friends, User
+					WHERE Friends.Friend1 = '$userID' and Friends.Friend2 = User.idUser
+					ORDER BY User.name ASC";
+        }
+        else {
+            $sql = "SELECT Friends.Friend2 as ide, User.name as name
+					FROM Friends, User
+					WHERE Friends.Friend1 = '$userID' and Friends.Friend2 = User.IDUser and User.name LIKE '%$keyword%'
+					ORDER BY User.name ASC";
+        }
+
+        $result = $this->conn->query($sql);
+        echo "result: " . $result->num_rows;
+
+        if ($result->num_rows > 0) {
+            while($row = $result->fetch_assoc()) {
+                echo "\nid: " . $row["ide"]. " - Name: " . $row["name"] . "<br>\n";
+            }
+            return 1;
+        } else {
+            echo "No friends";
+            return -1;
+        }
+
+    }
+
 
 }
 
