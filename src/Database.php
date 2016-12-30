@@ -438,6 +438,40 @@ class Database
         }
     }
 
+    function createChat($idCreator, $idwith)
+    {
+        $sql = "INSERT INTO Chat(chat_history,chatOwner) 
+                VALUES ('', $idCreator)";
+
+        if ($this->conn->query($sql) === TRUE) {
+            //echo "Chat created successfully\n";
+        } else {
+            echo "Error: " . $sql . "<br>" . $this->conn->error;
+        }
+
+
+        $sql = "SELECT count(idchat) as count FROM Chat GROUP BY idchat";
+        $result = $this->conn->query($sql);
+
+        $idChat = $result->num_rows;
+
+        $sql = "INSERT INTO Chats
+                VALUES ($idChat, $idCreator, $idwith)";
+
+        if ($this->conn->query($sql) === TRUE) {
+            echo "Chat created successfully\n";
+        } else {
+            echo "Error: " . $sql . "<br>" . $this->conn->error;
+        }
+
+    }
+
+
+    function updateChat($user1, $user2 ,$msg)
+    {
+
+    }
+
     function showUserGames($userID) {
 
 
@@ -471,6 +505,9 @@ class Database
             return -1;
         }
     }
+
+
+
 
     // Search for games
     function search($keyword, $userID, $showOwned) {
@@ -566,6 +603,8 @@ class Database
 
 
     }
+
+
 
     function doesOwn($gameID, $userID) {
 
