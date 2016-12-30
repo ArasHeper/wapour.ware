@@ -77,7 +77,6 @@ class Database
             {
                // echo  "q";
                 $id =  $row["idofuser"];
-
             }
 
             return $id;
@@ -215,7 +214,6 @@ class Database
             echo "Error: " . $sql . "<br>" . $this->conn->error;
             return false;
         }
-
     }
     //Updated profile description
     function editProfileDesc($userid, $desc)
@@ -275,10 +273,56 @@ class Database
         }
 
     }
-
-    //todo
-    function passChange($userid,$newpassword)
+    //changes the password
+    function changePassword($userid,$newpassword)
     {
+        $sql = "UPDATE login_System SET password = '$newpassword' WHERE idofuser = '$userid'";
+
+        if ($this->conn->query($sql) === TRUE) {
+            echo "Password changed successfully\n";
+        } else {
+            echo "Error: " . $sql . "<br>" . $this->conn->error;
+            return false;
+        }
+
+    }
+
+    //Sends gift. Gift message is message with a gift. Sender and reciever id is self explanatory. Game id is id of the sended game
+    function sendGift($giftMsg, $senderid, $recieverid, $gameid)
+    {
+        $sql = "INSERT INTO Gift(message) 
+                VALUES ('$giftMsg');";
+
+        if ($this->conn->query($sql) === TRUE) {
+            echo "Gift created successfully\n";
+        } else {
+            echo "Error: " . $sql . "<br>" . $this->conn->error;
+        }
+
+
+
+        $sql = "SELECT count(idgift) as count FROM Gift GROUP BY idgift";
+        $result = $this->conn->query($sql);
+
+        $giftID = $result->num_rows;
+        $sql = "INSERT INTO Contains 
+                VALUES ($giftID, $gameid)";
+
+        if ($this->conn->query($sql) === TRUE) {
+            echo "Contain created successfully\n";
+        } else {
+            echo "Error: " . $sql . "<br>" . $this->conn->error;
+        }
+
+        $sql = "INSERT INTO Gift_sends
+                VALUES ($giftID,$senderid,$recieverid);";
+
+        if ($this->conn->query($sql) === TRUE) {
+            echo "Transaction created successfully\n";
+        } else {
+            echo "Error: " . $sql . "<br>" . $this->conn->error;
+        }
+
 
     }
 
