@@ -297,6 +297,30 @@ class Database
 
     }
 
+    //Takes 2 user and make them friend
+    function makeFriends($user1, $user2)
+    {
+        $sql = "INSERT INTO Friends 
+                VALUES ($user1,$user2);";
+
+        if ($this->conn->query($sql) === TRUE) {
+            //echo "Gift created successfully\n";
+        } else {
+            echo "Error: " . $sql . "<br>" . $this->conn->error;
+        }
+
+        $sql = "INSERT INTO Friends 
+                VALUES ($user2,$user1);";
+
+        if ($this->conn->query($sql) === TRUE) {
+            echo "Friends created successfully\n";
+        } else {
+            echo "Error: " . $sql . "<br>" . $this->conn->error;
+        }
+
+
+    }
+
     //Sends gift. Gift message is message with a gift. Sender and reciever id is self explanatory. Game id is id of the sended game
     function sendGift($giftMsg, $senderid, $recieverid, $gameid)
     {
