@@ -132,7 +132,7 @@ require_once 'C:/xampp/htdocs/databaseservice/Database.php';
 		$password = $_POST['password'];
 		
 		$answer = $database->login($username, $password);
-		if($answer = 1){
+		if($answer != -1){
 			session_start();
 			header("Location: store.php");
 			exit;
